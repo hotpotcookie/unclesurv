@@ -1,0 +1,11 @@
+{
+    "setup_param":
+    {
+        "max_ping_attempt" : 50,
+        "disable_protocol" : ["tcp","udp","icmp"],
+        "disable_tcp_port" : [80,443,8080,22,21,23,2222],
+        "disable_udp_port" : [53],
+        "detection_method" : "ip",
+        "rule_chain_match" : "REJECT"
+    }
+}

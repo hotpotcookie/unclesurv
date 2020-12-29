@@ -5,6 +5,7 @@
 #--------------------------
 # o MAIN RUN (BACKGROUND)
 #--------------------------
+
 IFS=$'\n'
 date_year=$(date +'%Y')	
 file_prefix=$(sudo cat /var/log/syslog | tail -n 1 | cut -c 1-6 | tr -s ' ' '.')
@@ -142,38 +143,7 @@ do
 		echo    "----------------------------------------------------------------------------------------------------------------------" >> "log/$file_prefix.$date_year.db"
 
 		## baca .savedrules goes here & gapake tanggal tanggalan
-		if [[ -s "log/.fetch/.load.rules" ]]
-		then
-			uniq_rules=$(sudo cat log/.fetch/.load.rules | sort | uniq)
-			cat /dev/null > "log/.fetch/.load.rules"
-			echo "$uniq_rules" > "log/.fetch/.load.rules"
-		fi
-		if [[ -s "log/.fetch/.load.rules" ]]
-		then
-			while IFS= read -r get_line
-			do
-				if [[ $get_line ]]
-				then		
-					IFS=$'\t'
-					read -a arr_rule <<< "$get_line"
-					if [[ ${#arr_rule[@]} -gt 3 ]]
-					then
-						check_rule=$(sudo iptables -S INPUT | grep "${arr_rule[0]}" | grep "${arr_rule[1]}" | grep "${arr_rule[4]}")
-						if [[ ! $check_rule ]]
-						then
-							sudo iptables -A INPUT -s ${arr_rule[0]} -p ${arr_rule[1]}  --dport ${arr_rule[4]} -m conntrack --ctstate NEW,ESTABLISHED -j ${arr_rule[2]}
-							#sudo iptables -A INPUT -s $i_src -p $i_ptc --dport $p_tcp -m conntrack --ctstate NEW,ESTABLISHED -j $rule_param
-						fi					
-					else
-						check_rule=$(sudo iptables -S INPUT | grep "${arr_rule[0]}" | grep "${arr_rule[1]}")
-						if [[ ! $check_rule ]]
-						then
-							sudo iptables -A INPUT -s ${arr_rule[0]} -p ${arr_rule[1]} -j ${arr_rule[2]}
-						fi
-					fi
-				fi
-			done < "log/.fetch/.load.rules"
-		fi
+		sudo bash source/run-addrules.sh
 	fi
 done
 
