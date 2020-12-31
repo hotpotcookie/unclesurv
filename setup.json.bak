@@ -1,11 +1,27 @@
 {
-    "setup_param":
-    {
-        "max_ping_attempt" : 50,
-        "disable_protocol" : ["tcp","udp","icmp"],
-        "disable_tcp_port" : [80,443,8080,22,21,23,2222],
-        "disable_udp_port" : [53],
-        "detection_method" : "ip",
-        "rule_chain_match" : "REJECT"
-    }
+  "setup_param": {
+    "max_ping_attempt": 5,
+    "disable_protocol": [
+      "tcp",
+      "udp",
+      "icmp"
+    ],
+    "disable_tcp_port": [
+      80,
+      8080,
+      443
+    ],
+    "disable_udp_port": [],
+    "detection_method": "ip",
+    "rule_chain_match": "DROP"
+  },
+  "setup_gmail": {
+    "target_addrs": [
+        "icatmuhammad@gmail.com",
+        "hotpotcookie@gmail.com"
+    ],
+    "mails_subjct": "[WARNING] UncleSurv : One IP address have been Quarantine !",
+    "mails_header": "Unclesurv have detected and blocked one IP address that are potentially harmful to the system as a threat of DOS attack.",
+    "mails_footer": "Please Consider to contact the administrator for such events."
+  }
 }

@@ -27,6 +27,7 @@ then
 			sudo iptables -F
 			sudo cat /dev/null > "log/.fetch/.tmp.rules"
 			sudo cat /dev/null > "log/.fetch/.load.rules"
+			sudo cat /dev/null > "log/.fetch/.list.mail"
 			;;
 	esac
 else

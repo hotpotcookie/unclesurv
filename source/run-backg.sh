@@ -17,9 +17,14 @@ detect_param=$(jq '.setup_param.detection_method' setup.json | cut -d '"' -f 2)
 proto_param=$(jq '.setup_param.disable_protocol[]' setup.json | cut -d '"' -f 2)
 tcp_param=$(jq '.setup_param.disable_tcp_port[]' setup.json | cut -d '"' -f 2)
 udp_param=$(jq '.setup_param.disable_udp_port[]' setup.json | cut -d '"' -f 2)
+mail_sbj=$(jq '.setup_gmail.mails_subjct' setup.json | cut -d '"' -f 2)
+mail_hdr=$(jq '.setup_gmail.mails_header' setup.json | cut -d '"' -f 2)
+mail_ftr=$(jq '.setup_gmail.mails_footer' setup.json | cut -d '"' -f 2)
+mail_add=$(jq '.setup_gmail.target_addrs[]' setup.json | cut -d '"' -f 2)
 arr_proto=("$proto_param")
 arr_tcp=("$tcp_param")
 arr_udp=("$udp_param")
+arr_mail=("$mail_add")
 
 grep -a "UNCLE" /var/log/syslog | grep -a "$regx_prefix" > "log/$file_prefix.$date_year.log"
 curr_md5=$(md5sum "log/$file_prefix.$date_year.log" | cut -d ' ' -f 1)
@@ -42,6 +47,7 @@ do
 	if [[ $curr_md5 != $load_md5 || $curr_md5_2 != $load_md5_2 || $curr_md5_3 != $load_md5_3 ]]
 	then
 		cat /dev/null > "log/$file_prefix.$date_year.db"
+		cat /dev/null > "log/.fetch/.tmp.mail"
 		echo $curr_md5 > "log/.fetch/.log.md5"
 		echo $curr_md5_2 > "log/.fetch/.json.md5"
 		echo $curr_md5_3 > "log/.fetch/.rules.md5"
@@ -103,6 +109,19 @@ do
 						check_rule=$(sudo iptables -S INPUT | grep "$i_src")
 						if [[ ! $check_rule || $check_rule ]]
 						then
+							check_mail=$(cat log/.fetch/.list.mail | grep "$i_mac" | grep "$i_src")
+							if [[ ! $check_mail ]]
+							then
+								curr_date=$(date +'%D %T %p')								
+								#echo "$i_mac" >> "log/.fetch/.list.mail"
+								echo -e "Subject: $mail_sbj | $i_src\n\n::" >> "log/.fetch/.tmp.mail"
+								echo -e "$curr_date\n$mail_hdr\n::" >> "log/.fetch/.tmp.mail"
+								echo -e "Source MAC Address: $i_mac" >> "log/.fetch/.tmp.mail"
+								echo -e "Source IP Address: $i_src" >> "log/.fetch/.tmp.mail"
+								echo -e "Server IP Address: $i_dst" >> "log/.fetch/.tmp.mail"
+								echo -e "Protocol Detection: $raw_ptc" >> "log/.fetch/.tmp.mail"
+								echo -e "Sequence Requests: $timeinc attempts out of $max_param at max\n::" >> "log/.fetch/.tmp.mail"
+							fi
 							for i_ptc in ${arr_proto[@]}
 							do
 								case $i_ptc in
@@ -114,6 +133,10 @@ do
 												#sudo iptables -A INPUT -s $i_src -p $i_ptc --dport $p_tcp -m conntrack --ctstate NEW,ESTABLISHED -j $rule_param
 												echo -e "$file_prefix.$date_year\t$i_src\t$i_ptc\t$rule_param\tPORT $p_tcp" >> "log/.fetch/.tmp.rules"
 												echo -e "$i_src\t$i_ptc\t$rule_param\tPORT\t$p_tcp" >> "log/.fetch/.load.rules"
+												if [[ ! $check_mail ]]
+												then
+													echo -e "$i_src $i_ptc $rule_param PORT $p_tcp" >> "log/.fetch/.tmp.mail"
+												fi
 											done
 											continue
 										fi
@@ -126,6 +149,10 @@ do
 												#sudo iptables -A INPUT -s $i_src -p $i_ptc --dport $p_udp -m conntrack --ctstate NEW,ESTABLISHED -j $rule_param
 												echo -e "$file_prefix.$date_year\t$i_src\t$i_ptc\t$rule_param\tPORT $p_udp" >> "log/.fetch/.tmp.rules"
 												echo -e "$i_src\t$i_ptc\t$rule_param\tPORT\t$p_udp" >> "log/.fetch/.load.rules"
+												if [[ ! $check_mail ]]
+												then
+													echo -e "$i_src $i_ptc $rule_param PORT $p_udp" >> "log/.fetch/.tmp.mail"
+												fi
 											done
 											continue
 										fi
@@ -134,16 +161,30 @@ do
 								#sudo iptables -A INPUT -s $i_src -p $i_ptc -j $rule_param
 								echo -e "$file_prefix.$date_year\t$i_src\t$i_ptc\t$rule_param" >> "log/.fetch/.tmp.rules"
 								echo -e "$i_src\t$i_ptc\t$rule_param" >> "log/.fetch/.load.rules"
-							done							
+								if [[ ! $check_mail ]]
+								then
+									echo -e "$i_src $i_ptc $rule_param" >> "log/.fetch/.tmp.mail"
+								fi					
+							done
+							## baca .savedrules goes here & gapake tanggal tanggalan
+							sudo bash source/run-addrules.sh														
+							if [[ ! $check_mail ]]
+							then
+								echo -e "::\nPlease checkout log/$file_prefix.$date_year.log and log/$file_prefix.$date_year.db. $mail_ftr" >> "log/.fetch/.tmp.mail"
+								echo -e "\nSincerly,\nUncleSurv" >> "log/.fetch/.tmp.mail"
+								echo -e "$i_mac\t$i_src" >> "log/.fetch/.list.mail"
+								for i_mailadd in ${arr_mail[@]}
+								do
+									nohup sudo sendmail $i_mailadd < "log/.fetch/.tmp.mail"  &> /dev/null &
+									wait $!
+								done
+							fi
 						fi
 					fi					
 				fi
 			done
 		done
 		echo    "----------------------------------------------------------------------------------------------------------------------" >> "log/$file_prefix.$date_year.db"
-
-		## baca .savedrules goes here & gapake tanggal tanggalan
-		sudo bash source/run-addrules.sh
 	fi
 done
 

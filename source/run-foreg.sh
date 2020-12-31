@@ -14,10 +14,10 @@ main() #class main
 		curr_date=$(date +'%D %T %p')
 		echo "unclesurv 1.2.1              $curr_date"
 		echo "-------------------------------------------------"
-		echo "[1]      ADD NEW RULES x | 0 UPDATE PARAMETER   [5]"		
-		echo "[2]  VIEW ACTIVE RULES x | 0 VIEW PROCESSES     [6]"
-		echo "[3]    RESET ALL RULES 0 | 0 CLEAR SCREEN       [7]"
-		echo "[4]          VIEW LOGS 0 | 0 EXIT               [8]"
+		echo "[1]      ADD NEW RULES  |  UPDATE PARAMETER   [5]"		
+		echo "[2]  VIEW ACTIVE RULES  |  VIEW PROCESSES     [6]"
+		echo "[3]    RESET ALL RULES  |  CLEAR SCREEN       [7]"
+		echo "[4]          VIEW LOGS  |  EXIT               [8]"
 		echo "-------------------------------------------------"
 		while :
 		do
@@ -36,9 +36,11 @@ meth_resetrule()
 	sudo iptables -F
 	sudo cat /dev/null > "log/.fetch/.tmp.rules"
 	sudo cat /dev/null > "log/.fetch/.load.rules"
+	sudo cat /dev/null > "log/.fetch/.list.mail"	
 	echo -e "--\n:: Flushing iptables ..."
 	echo -e ":: Overwritting log/.fetch/.tmp.rules ..."
-	echo -e ":: Overwritting log/.fetch/.load.rules ...\n"	
+	echo -e ":: Overwritting log/.fetch/.load.rules ..."	
+	echo -e ":: Overwritting log/.fetch/.list.mail ...\n"		
 }
 meth_viewlog() {
 	echo -e "--\n:: LISTING : log/\n--"

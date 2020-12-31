@@ -5,7 +5,7 @@
 #--------------------------
 # o PRE-REQUESITES CHECK
 #--------------------------
-pkg_arr=("tcpdump" "debconf-utils" "iptables" "netfilter-persistent" "ufw" "rsyslog" "jq")
+pkg_arr=("rsyslog" "jq" "ssmtp" "libphp-phpmailer")
 pth_arr=("log" "source" "log/.fetch")
 arr_len=${#pth_arr[@]}
 echo -ne ":: Preparing internal directory ...      "
@@ -23,6 +23,8 @@ touch "log/.fetch/.json.md5"
 touch "log/.fetch/.rules.md5"
 touch "log/.fetch/.tmp.rules"
 touch "log/.fetch/.load.rules"
+touch "log/.fetch/.tmp.mail"
+touch "log/.fetch/.list.mail"
 
 echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
 echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
