@@ -1,6 +1,6 @@
 {
   "setup_rule": {
-    "max_ping_attempt": 40,
+    "max_ping_attempt": 100,
     "disable_protocol": [
       "tcp",
       "udp",
@@ -21,7 +21,9 @@
     "sender_alias": "Under Close Surveillance",
     "target_addrs": [
       "icatmuhammad@gmail.com",
-      "hotpotcookie@gmail.com"
+      "hotpotcookie@gmail.com",
+      "jefaro.ahmad@gmail.com",
+      "fabiananshor21@gmail.com"
     ],
     "mails_subjct": "[WARNING] UncleSurv : One IP address have been Quarantine !",
     "mails_header": "Unclesurv have detected and blocked one IP address that are potentially harmful to the system as a threat of DOS attack.",

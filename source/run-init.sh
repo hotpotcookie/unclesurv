@@ -5,7 +5,6 @@
 #--------------------------
 # o PRE-REQUESITES CHECK
 #--------------------------
-pkg_arr=("rsyslog" "jq" "ssmtp" "libphp-phpmailer")
 pth_arr=("log" "source" "log/.fetch")
 arr_len=${#pth_arr[@]}
 echo -ne ":: Preparing internal directory ...      "
@@ -26,29 +25,7 @@ touch "log/.fetch/.load.rules"
 touch "log/.fetch/.tmp.mail"
 touch "log/.fetch/.list.mail"
 
-echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
-echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
-
 arr_len=${#pkg_arr[@]}
-echo -ne "\n:: Checking required packages ...       "
-
-i=0
-echo -ne " [$i/$arr_len]"'\r\t\t\t\t\t'; sleep 0.5;
-wait $!
-for idx in ${pkg_arr[@]}
-do
-	i=$((++i))
-	pkg_stat=$(dpkg-query -l $idx | tail -n 1 | tr -s '\t' ' ' | cut -d ' ' -f 1 2> /dev/null)
-	if [[ $pkg_stat == 'ii' ]]
-	then
-		echo -ne " [$i/$arr_len]"'\r\t\t\t\t\t'; sleep 0.5;
-		continue
-	fi
-	nohup sudo apt-get install $idx -y &> /dev/null &
-	wait $!
-		echo -ne " [$i/$arr_len]"'\r\t\t\t\t\t'; sleep 0.5;
-done
-
 rules_check=$(sudo iptables -L -n -v | grep UNCLE)
 if [[ $rules_check == '' ]]
 then
@@ -59,20 +36,8 @@ curr_md5=$(md5sum "setup.json" | cut -d ' ' -f 1)
 load_md5=$(cat "log/.fetch/.json.md5")
 
 echo -ne "\n:: Loading recent iptables rules ..."; sleep 0.5;
-nohup sudo service netfilter-persistent restart &> /dev/null &
-wait $!
 sudo bash source/run-addrules.sh
 
 echo -ne "\n:: Restarting rsyslog daemon ..."; sleep 0.5;
 nohup sudo service rsyslog restart &> /dev/null &
 wait $!
-
-#echo -ne "\n[WAIT]: Enabling firewall ..."
-#ufw_check=$(sudo ufw verbose | cut -d ':' -f 2 | tr -d ' ')
-#if [[ $ufw_check == 'inactive' ]]
-#then
-#	nohup sudo ufw enable &> /dev/null &
-#fi
-
-### allow outbound ip
-### baca file DB, buat load reload
