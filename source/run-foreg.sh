@@ -76,7 +76,7 @@ meth_updateparam()
 				;;
 		esac			
 		echo -e "--"
-		read -p ":: INSERT KEY NAMWE : " sec_entry
+		read -p ":: INSERT KEY NAME  : " sec_entry
 		read -p ":: INSERT NEW VALUE : " new_entry
 		case $opt_json in
 			1)	if [[ $sec_entry && $new_entry ]]
