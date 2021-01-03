@@ -63,19 +63,41 @@ meth_viewproc()
 }
 meth_updateparam()
 {
-	echo -e "--\n:: LISTING : setup.json"
-	echo -e ":: SECTION : .setup_param\n--"
-	jq '.setup_param' setup.json
-	echo -e "--"
-	read -p ":: INSERT KEY NAMWE : " sec_entry
-	read -p ":: INSERT NEW VALUE : " new_entry
-	if [[ $sec_entry && $new_entry ]]
+	echo -e "--\n:: LISTING : setup.json\n--"
+	echo -e "1 | setup_rule"
+	echo -e "2 | setup_gmail\n--"
+	read -p ":: CHOOSE SECTION : " opt_json
+	if [[ $opt_json ]]
 	then
-		exec_jq=$(jq '.setup_param.'"$sec_entry"' = '"$new_entry"'' setup.json)
-		if [[ $exec_jq ]]
-		then
-			echo "$exec_jq" > setup.json
-		fi
+		case $opt_json in
+			1)	jq '.setup_rule' setup.json
+				;;
+			2)	jq '.setup_gmail' setup.json
+				;;
+		esac			
+		echo -e "--"
+		read -p ":: INSERT KEY NAMWE : " sec_entry
+		read -p ":: INSERT NEW VALUE : " new_entry
+		case $opt_json in
+			1)	if [[ $sec_entry && $new_entry ]]
+				then
+					exec_jq=$(jq '.setup_rule.'"$sec_entry"' = '"$new_entry"'' setup.json)
+					if [[ $exec_jq ]]
+					then
+						echo "$exec_jq" > setup.json
+					fi
+				fi
+				;;
+			2)	if [[ $sec_entry && $new_entry ]]
+				then
+					exec_jq=$(jq '.setup_gmail.'"$sec_entry"' = '"$new_entry"'' setup.json)
+					if [[ $exec_jq ]]
+					then
+						echo "$exec_jq" > setup.json
+					fi
+				fi
+				;;
+		esac
 	fi
 	echo ""
 }

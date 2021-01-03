@@ -1,6 +1,6 @@
 {
-  "setup_param": {
-    "max_ping_attempt": 55,
+  "setup_rule": {
+    "max_ping_attempt": 40,
     "disable_protocol": [
       "tcp",
       "udp",
@@ -18,6 +18,7 @@
     "rule_chain_match": "DROP"
   },
   "setup_gmail": {
+    "sender_alias": "Under Close Surveillance",
     "target_addrs": [
       "icatmuhammad@gmail.com",
       "hotpotcookie@gmail.com"
@@ -25,5 +26,8 @@
     "mails_subjct": "[WARNING] UncleSurv : One IP address have been Quarantine !",
     "mails_header": "Unclesurv have detected and blocked one IP address that are potentially harmful to the system as a threat of DOS attack.",
     "mails_footer": "Please Consider to contact the administrator for such events, since it may growth for this perticular MAC source."
+  },
+  "setup_param": {
+    "max_ping_attempt": 30
   }
 }

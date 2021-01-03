@@ -21,13 +21,16 @@ then
 			sudo bash source/run-backg.sh &
 			echo -e "\n:: Initiating program ..."; sleep 0.5;
 			echo -e ":: Redirecting to main interface ..."; sleep 1.5;
-			sudo bash source/run-foreg.sh			
+			sudo bash source/run-foreg.sh
 			;;
 		"clear")
 			sudo iptables -F
 			sudo cat /dev/null > "log/.fetch/.tmp.rules"
 			sudo cat /dev/null > "log/.fetch/.load.rules"
 			sudo cat /dev/null > "log/.fetch/.list.mail"
+			;;
+		*|"help")
+			echo -e "available options: start / restart / stop / clear / help"
 			;;
 	esac
 else

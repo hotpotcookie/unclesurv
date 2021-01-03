@@ -11,16 +11,17 @@ date_year=$(date +'%Y')
 file_prefix=$(sudo cat /var/log/syslog | tail -n 1 | cut -c 1-6 | tr -s ' ' '.')
 regx_prefix=$(sudo cat /var/log/syslog | tail -n 1 | cut -c 1-6)	
 
-max_param=$(jq '.setup_param.max_ping_attempt' setup.json)
-rule_param=$(jq '.setup_param.rule_chain_match' setup.json | cut -d '"' -f 2)
-detect_param=$(jq '.setup_param.detection_method' setup.json | cut -d '"' -f 2)
-proto_param=$(jq '.setup_param.disable_protocol[]' setup.json | cut -d '"' -f 2)
-tcp_param=$(jq '.setup_param.disable_tcp_port[]' setup.json | cut -d '"' -f 2)
-udp_param=$(jq '.setup_param.disable_udp_port[]' setup.json | cut -d '"' -f 2)
+max_param=$(jq '.setup_rule.max_ping_attempt' setup.json)
+rule_param=$(jq '.setup_rule.rule_chain_match' setup.json | cut -d '"' -f 2)
+detect_param=$(jq '.setup_rule.detection_method' setup.json | cut -d '"' -f 2)
+proto_param=$(jq '.setup_rule.disable_protocol[]' setup.json | cut -d '"' -f 2)
+tcp_param=$(jq '.setup_rule.disable_tcp_port[]' setup.json | cut -d '"' -f 2)
+udp_param=$(jq '.setup_rule.disable_udp_port[]' setup.json | cut -d '"' -f 2)
 mail_sbj=$(jq '.setup_gmail.mails_subjct' setup.json | cut -d '"' -f 2)
 mail_hdr=$(jq '.setup_gmail.mails_header' setup.json | cut -d '"' -f 2)
 mail_ftr=$(jq '.setup_gmail.mails_footer' setup.json | cut -d '"' -f 2)
 mail_add=$(jq '.setup_gmail.target_addrs[]' setup.json | cut -d '"' -f 2)
+send_als=$(jq '.setup_gmail.sender_alias' setup.json | cut -d '"' -f 2)
 arr_proto=("$proto_param")
 arr_tcp=("$tcp_param")
 arr_udp=("$udp_param")
@@ -175,7 +176,7 @@ do
 								echo -e "$i_mac\t$i_src" >> "log/.fetch/.list.mail"
 								for i_mailadd in ${arr_mail[@]}
 								do
-									nohup sudo sendmail $i_mailadd < "log/.fetch/.tmp.mail"  &> /dev/null &
+									nohup sendmail -F "$send_als" $i_mailadd < "log/.fetch/.tmp.mail"  &> /dev/null &
 									wait $!
 								done
 							fi
