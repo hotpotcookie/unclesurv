@@ -28,6 +28,7 @@ then
 			sudo cat /dev/null > "log/.fetch/.tmp.rules"
 			sudo cat /dev/null > "log/.fetch/.load.rules"
 			sudo cat /dev/null > "log/.fetch/.list.mail"
+			sudo cat /dev/null > "log/.fetch/.cust.load.rules"				
 			;;
 		*|"help")
 			echo -e "available options: start / restart / stop / clear / help"

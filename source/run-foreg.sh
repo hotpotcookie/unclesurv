@@ -12,7 +12,7 @@ main() #class main
 		############# Feature program ############		
 		clear		
 		curr_date=$(date +'%D %T %p')
-		echo "unclesurv 1.2.1              $curr_date"
+		echo "unclesurv 1.3.2              $curr_date"
 		echo "-------------------------------------------------"
 		echo "[1]      ADD NEW RULES  |  UPDATE PARAMETER   [5]"		
 		echo "[2]  VIEW ACTIVE RULES  |  VIEW PROCESSES     [6]"
@@ -36,10 +36,12 @@ meth_resetrule()
 	sudo iptables -F
 	sudo cat /dev/null > "log/.fetch/.tmp.rules"
 	sudo cat /dev/null > "log/.fetch/.load.rules"
+	sudo cat /dev/null > "log/.fetch/.cust.load.rules"	
 	sudo cat /dev/null > "log/.fetch/.list.mail"	
 	echo -e "--\n:: Flushing iptables ..."
 	echo -e ":: Overwritting log/.fetch/.tmp.rules ..."
 	echo -e ":: Overwritting log/.fetch/.load.rules ..."	
+	echo -e ":: Overwritting log/.fetch/.cust.load.rules ..."		
 	echo -e ":: Overwritting log/.fetch/.list.mail ...\n"		
 }
 meth_viewlog() {
@@ -103,7 +105,8 @@ meth_updateparam()
 }
 meth_checkstat()
 {
-	echo -e "--"
+	ip_srv=$(ip a | grep inet | grep eth | cut -c 10- | cut -d ' ' -f 1)
+	echo -e "--\n:: IP ADDR : $ip_srv\n:: IPTABLES RULESET\n--"
 	sudo iptables -S INPUT ; echo "--"
 	sudo iptables -S OUTPUT ; echo "--"
 	sudo iptables -S FORWARD ; echo -e "--\n"	
@@ -138,7 +141,7 @@ S_ipaddress()
 	if [ ! -z $opt_ip ]
 	then
 		case $opt_ip in
-			1)	echo -n ":: INSERT SOURCE IP ADDRESS : "
+			1)	echo -n ":: INSERT SOURCE IP ADDRESS      : "
 				read ip_source
 				if [ ! -z $ip_source ] #kalo bisa dia detect isi variable sama bolehin angka doang
 				then
@@ -168,7 +171,7 @@ D_ipaddress()
 	if [ ! -z $opt_ipD ]
 	then
 		case $opt_ipD in
-		1)	echo -n ":: INSERT DESTINATION IP ADDRESS : "
+		1)	echo -n ":: INSERT DESTINATION IP ADDRESS      : "
 			read ip_destination
 			if [ ! -z $ip_destination ] #kalo bisa dia detect isi variable sama bolehin angka doang
 			then
@@ -198,11 +201,11 @@ protocol()
 	if [ ! -z $proto_ch ]
 	then
 		case $proto_ch in
-		1) 	read -p ":: INSERT PROTOCOL : " proto
+		1) 	read -p ":: INSERT PROTOCOL         : " proto
 			proto=$(echo "$proto" | tr '[:upper:]' '[:lower:]')
 			if [[ $proto == 'tcp' || $proto == 'udp' ]]
 			then
-				read -p ":: INSERT $proto PORT : " port
+				read -p ":: INSERT $proto PORT         : " port
 			fi
 			rule
 			;;
@@ -240,19 +243,19 @@ generate_rule()
 	###################Proses membuat aturan####################
 	if [[ $ip_source == "all" ]]
 	then
-		ip_source=""
+		ip_source=" "
 	else
 	 	ip_source="-s $ip_source"
 	fi
 	if [[ $ip_destination == "all" ]]
 	then
-	 	ip_destination=""
+	 	ip_destination=" "
 	else
 	 	ip_destination="-d $ip_destination"
 	fi
 	if [[ $proto == "all" ]]
 	then
-	 	proto=""
+	 	proto=" "
 	else
 	 	proto="-p $proto"
 	fi
@@ -265,10 +268,10 @@ generate_rule()
 		for i in ${arr_port[@]}
 		do
 			echo -e ":: CURRENT RULESET : iptables $chain $ip_source $ip_destination $proto --dport $i -m conntrack --ctstate NEW,ESTABLISHED $rule"
-		done		
+		done
 		echo "--"
 	else
-		echo -e "--\n:: CURRENT RULESET : iptables $chain $ip_source $ip_destination $j $rule"
+		echo -e "--\n:: CURRENT RULESET : iptables $chain $ip_source $ip_destination $proto $rule"
 	fi
 	read -p ":: CONFIRM TO ADD RULESET TO IPTABLES (y) ? " confirm_opt
 	if [[ $confirm_opt == 'y' || $confirm_opt == 'Y' ]]
@@ -278,11 +281,14 @@ generate_rule()
 		then
 			for i in ${arr_port[@]}
 			do
-				sudo iptables $chain $ip_source $ip_destination $proto --dport $i -m conntrack --ctstate NEW,ESTABLISHED $rule
+				#sudo iptables $chain $ip_source $ip_destination $proto --dport $i -m conntrack --ctstate NEW,ESTABLISHED $rule
+				echo -e "! $chain\t$ip_source\t$ip_destination\t$proto\tPORT\t$i\t$rule" >> "log/.fetch/.cust.load.rules"				
 			done		
 		else
-			sudo iptables $chain $ip_source $ip_destination $j $rule
-		fi		
+			#sudo iptables $chain $ip_source $ip_destination $proto $rule
+			echo -e "@ $chain\t$ip_source\t$ip_destination\t$rule\t$proto" >> "log/.fetch/.cust.load.rules"			
+		fi
+		sudo bash source/run-addrules-cust.sh
 	fi
 	echo ""
 }

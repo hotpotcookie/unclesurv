@@ -24,6 +24,7 @@ touch "log/.fetch/.tmp.rules"
 touch "log/.fetch/.load.rules"
 touch "log/.fetch/.tmp.mail"
 touch "log/.fetch/.list.mail"
+touch "log/.fetch/.cust.load.rules"
 
 arr_len=${#pkg_arr[@]}
 rules_check=$(sudo iptables -L -n -v | grep UNCLE)
@@ -37,6 +38,7 @@ load_md5=$(cat "log/.fetch/.json.md5")
 
 echo -ne "\n:: Loading recent iptables rules ..."; sleep 0.5;
 sudo bash source/run-addrules.sh
+sudo bash source/run-addrules-cust.sh
 
 echo -ne "\n:: Restarting rsyslog daemon ..."; sleep 0.5;
 nohup sudo service rsyslog restart &> /dev/null &
