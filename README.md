@@ -26,7 +26,7 @@ AuthUser=yourgmail_account@gmail.com
 AuthPass=yourgmail_password
 ```
 ## Tree Structure
-```java
+```bash
 unclersurv/
 ├── log/
 │   ├── .fetch/
