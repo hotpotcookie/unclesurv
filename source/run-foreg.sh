@@ -68,7 +68,7 @@ meth_updateparam()
 	echo -e "--\n:: LISTING : setup.json\n--"
 	echo -e "1 | setup_rule"
 	echo -e "2 | setup_gmail\n--"
-	read -p ":: CHOOSE SECTION : " opt_json
+	read -p ":: CHOOSE SECTION  : " opt_json
 	if [[ $opt_json ]]
 	then
 		case $opt_json in

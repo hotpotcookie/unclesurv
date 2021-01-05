@@ -1,6 +1,6 @@
 {
   "setup_rule": {
-    "max_ping_attempt": 20,
+    "max_ping_attempt": 35,
     "disable_protocol": [
       "tcp",
       "udp",
@@ -28,8 +28,5 @@
     "mails_subjct": "[WARNING] UncleSurv : One IP address have been Quarantine !",
     "mails_header": "Unclesurv have detected and blocked one IP address that are potentially harmful to the system as a threat of DOS attack.",
     "mails_footer": "Please Consider to contact the administrator for such events, since it may growth for this perticular MAC source."
-  },
-  "setup_param": {
-    "max_ping_attempt": 30
   }
 }
