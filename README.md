@@ -17,6 +17,9 @@ $ unzip main.zip -d unclesurv
 $ cd unclesurv/
 ```
 ```bash
+$ sudo apt-get install jq libphp-phpmailer rsyslog ssmtp -y
+```
+```bash
 $ sudo nano /etc/ssmtp/ssmtp.conf
 ...
 UseSTARTTLS=YES
