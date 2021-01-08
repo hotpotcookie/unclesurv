@@ -1,0 +1,1 @@
+-I INPUT -p icmp --icmp-type echo-request -j LOG --log-prefix LOGGING_PING_UNCLESURV

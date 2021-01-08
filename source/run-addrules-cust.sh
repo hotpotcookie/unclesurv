@@ -41,6 +41,13 @@ then
 		fi
 	done < "log/.fetch/.cust.load.rules"
 fi
+rules_check=$(sudo iptables -L -n -v | grep UNCLE)
+if [[ $rules_check == '' ]]
+then
+	get_rule=$(cat log/.fetch/.log.rules)
+	sudo iptables $get_rule
+fi
+
 
 #    "JSON_README_SETUP_PARAM":
 #    {

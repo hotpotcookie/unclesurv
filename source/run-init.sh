@@ -25,12 +25,15 @@ touch "log/.fetch/.load.rules"
 touch "log/.fetch/.tmp.mail"
 touch "log/.fetch/.list.mail"
 touch "log/.fetch/.cust.load.rules"
+touch "log/.fetch/.log.rules"
+echo "-I INPUT -p icmp --icmp-type echo-request -j LOG --log-prefix LOGGING_PING_UNCLESURV" > "log/.fetch/.log.rules"
 
 arr_len=${#pkg_arr[@]}
 rules_check=$(sudo iptables -L -n -v | grep UNCLE)
 if [[ $rules_check == '' ]]
 then
-	sudo iptables -I INPUT -p icmp --icmp-type echo-request -j LOG --log-prefix "LOGGING_PING_UNCLESURV"
+	get_rule=$(cat log/.fetch/.log.rules)
+	sudo iptables $get_rule
 fi
 
 curr_md5=$(md5sum "setup.json" | cut -d ' ' -f 1)

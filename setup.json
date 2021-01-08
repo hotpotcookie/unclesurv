@@ -1,6 +1,6 @@
 {
   "setup_rule": {
-    "max_ping_attempt": 35,
+    "max_ping_attempt": 40,
     "disable_protocol": [
       "tcp",
       "udp",

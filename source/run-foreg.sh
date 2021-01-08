@@ -42,7 +42,13 @@ meth_resetrule()
 	echo -e ":: Overwritting log/.fetch/.tmp.rules ..."
 	echo -e ":: Overwritting log/.fetch/.load.rules ..."	
 	echo -e ":: Overwritting log/.fetch/.cust.load.rules ..."		
-	echo -e ":: Overwritting log/.fetch/.list.mail ...\n"		
+	echo -e ":: Overwritting log/.fetch/.list.mail ...\n"
+	rules_check=$(sudo iptables -L -n -v | grep UNCLE)
+	if [[ $rules_check == '' ]]
+	then
+		get_rule=$(cat log/.fetch/.log.rules)
+		sudo iptables $get_rule
+	fi	
 }
 meth_viewlog() {
 	echo -e "--\n:: LISTING : log/\n--"
@@ -60,7 +66,7 @@ meth_exit() {
 meth_viewproc()
 {
 	echo "--"
-	ps axjf
+	ps axjf | grep -e "PPID" -e "init" -e "bash" -e "rsyslogd"
 	echo ""
 }
 meth_updateparam()
@@ -106,7 +112,7 @@ meth_updateparam()
 meth_checkstat()
 {
 	ip_srv=$(ip a | grep inet | grep eth | cut -c 10- | cut -d ' ' -f 1)
-	echo -e "--\n:: IP ADDR : $ip_srv\n:: IPTABLES RULESET\n--"
+	echo -e "--\n:: IP ADDRESS : $ip_srv\n:: IPTABLES RULESET\n--"
 	sudo iptables -S INPUT ; echo "--"
 	sudo iptables -S OUTPUT ; echo "--"
 	sudo iptables -S FORWARD ; echo -e "--\n"	
