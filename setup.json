@@ -1,6 +1,6 @@
 {
   "setup_rule": {
-    "max_ping_attempt": 40,
+    "max_ping_attempt": 5,
     "disable_protocol": [
       "tcp",
       "udp",
@@ -18,7 +18,7 @@
     "rule_chain_match": "DROP"
   },
   "setup_gmail": {
-    "sender_alias": "Under Close Surveillance",
+    "sender_alias": "Admin UncleSurv",
     "target_addrs": [
       "icatmuhammad@gmail.com",
       "hotpotcookie@gmail.com",

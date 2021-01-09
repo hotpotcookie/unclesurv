@@ -2,3 +2,4 @@ jq
 libphp-phpmailer
 rsyslog
 ssmtp
+mailutils
