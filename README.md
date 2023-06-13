@@ -4,6 +4,8 @@
 
 # UncleSurv // (n). underclosesurveillance
 
+YouTube Demo : https://www.youtube.com/watch?v=iBkfJXTKarc
+
 UncleSurv ( Under Close Surveillance ) is a simple bash-based program that is designated to prevent DoS threat, which is specialized for ICMP Flood attack. The program itself has 2 modes that are adapted from IDS and IPS functionality, so it may detect, notify, and deflect the potential threat based on the parameter that has been set up on a JSON file.
 
 The decision method will be taken from the client's ping activity toward the machine/server. When the sequence reaches the max parameter, the program will automatically call out the client's IP to be issued with IPTABLES for further management of its connection. User can also add their own rules manually that later to be also added to the saved logs, so it will automatically load the rules whenever the program is about to run.
